@@ -298,3 +298,12 @@
           do (when length
                (return (decode-response recv 0)))
           finally (error "Failed to get a response from any server."))))
+
+(defun query-data (hostname &rest args)
+  (loop for record in (getf (apply #'query hostname args) :answers)
+        collect (getf record :data)))
+
+(defun resolve (hostname &rest args)
+  (let ((list (append (apply #'query-data hostname :type :A args)
+                      (apply #'query-data hostname :type :AAAA args))))
+    (values (first list) list)))
