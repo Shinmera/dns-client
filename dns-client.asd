@@ -15,6 +15,8 @@
   :source-control (:git "https://github.com/shinmera/dns-client.git")
   :serial T
   :components ((:file "package")
+               (:file "toolkit")
+               (:file "record-types")
                (:file "client")
                (:file "documentation"))
   :depends-on (:usocket
