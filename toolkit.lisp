@@ -10,8 +10,8 @@
   ())
 
 (define-condition dns-server-failure (error dns-condition)
-  ((dns-server :initarg :dns-server :accessor dns-server)
-   (response-code :initarg :response-code :accessor response-code))
+  ((dns-server :initarg :dns-server :reader dns-server)
+   (response-code :initarg :response-code :reader response-code))
   (:report (lambda (c s) (format s "DNS server ~%  ~a~%responded with failure code ~d~@[~%  ~a~]"
                                  (dns-server c) (response-code c) (response-code-name (response-code c))))))
 

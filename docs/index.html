@@ -1,0 +1,216 @@
+<!DOCTYPE html> <html lang="EN"> <head> <meta charset="utf-8"> <title>Dns Client</title> <style>html body{margin:0 auto 0 auto;padding:20px;max-width:1024px;font-family:sans-serif;font-size:14pt;overflow-y:scroll;}html body a{text-decoration:none;}html body a[href]{color:#0055AA;}html body a[href]:hover{color:#0088EE;}html body pre{background:#FAFAFA;border:1px solid #DDDDDD;padding:0.75em;overflow-x:auto;}html body pre >code a[href]{color:#223388;}article.project h1{font-size:1.7em;}article.project h1,article.project h2,article.project h3,article.project h4,article.project h5,article.project h6{margin:0.2em 0 0.1em 0;text-indent:1em;}article.project >header{text-align:center;}article.project >header img.logo{display:block;margin:auto;max-height:170px;}article.project >header h1{display:inline-block;text-indent:0;font-size:2.5em;}article.project >header .version{vertical-align:bottom;}article.project >header .languages{margin-top:-0.5em;text-transform:capitalize;}article.project >header .description{margin:0;}article.project >header .pages{margin-top:0.5em;font-size:1.2em;text-transform:capitalize;}article.project >header .pages a{display:inline-block;padding:0 0.2em;}article.project >section{margin:1em 0 1em 0;}article.project #index >ul{list-style:none;margin:0;padding:0;}article.project .row label{display:inline-block;min-width:8em;}article.project #system .row{display:flex;}article.project #system #dependencies{display:inline;margin:0;padding:0;}article.project #system #dependencies li{display:inline;padding:0 0.2em;}article.definition{margin:1em 0 0 0;}article.definition >header h1,article.definition >header h2,article.definition >header h3,article.definition >header h4,article.definition >header h5,article.definition >header h6{text-indent:0;display:inline-block;}article.definition >header ul{display:inline-block;list-style:none;margin:0;padding:0;}article.definition >header ul li{display:inline-block;padding:0 0.2em 0 0;}article.definition >header .visibility{display:none;}article.definition >header .visibility,article.definition >header .type{text-transform:lowercase;}article.definition >header .source-link{visibility:hidden;float:right;}article.definition >header .source-link:after{visibility:visible;content:"[SRC]";}article.definition .docstring{margin:0 0 0 1em;}article.definition .docstring pre{font-size:0.8em;white-space:pre-wrap;}.definition.package >header ul.nicknames{display:inline-block;list-style:none;margin:0;padding:0 0 0 1em;}.definition.package >header ul.nicknames li{display:inline;}.definition.package >header ul.nicknames:before{content:"(";}.definition.package >header ul.nicknames:after{content:")";}.definition.package ul.definitions{margin:0;list-style:none;padding:0 0 0 0.5em;}.definition.callable >header .name:before,.definition.type >header .name:before{content:"(";font-weight:normal;}.definition.callable >header .arguments:after,.definition.type >header .arguments:after{content:")";}.definition.callable >header .arguments .arguments:before,.definition.type >header .arguments .arguments:before{content:"(";}.definition.callable >header .arguments .argument,.definition.type >header .arguments .argument{padding:0;}.definition.callable >header .arguments .argument.lambda-list-keyword,.definition.type >header .arguments .argument.lambda-list-keyword{color:#991155;}.definition li>mark{background:none;border-left:0.3em solid #0088EE;padding-left:0.3em;display:block;} </style> </head> <body> <article class="project"> <header>  <h1>dns client</h1>  <span class="version">1.0.0</span>  <nav class="languages">  <a href="index.html">English</a>  </nav>  <p class="description">A client for the DNS protocol.</p>  <nav class="pages">  <a href="index.html">dns client</a>  </nav> </header> <section id="documentation"><article><h2 id="About dns-client">About dns-client</h2><p>This is a pure-lisp implementation of a DNS client. You can use this to resolve hostnames, reverse-lookup IP addresses, and fetch other kinds of DNS records.</p><h2 id="How To">How To</h2><p>The primary interface is <code><a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AQUERY" class="xref">query</a></code>, with shorthands for the most common operations in <code><a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESOLVE" class="xref">resolve</a></code> and <code><a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AHOSTNAME" class="xref">hostname</a></code>.</p><code style="display:block" class="code-block" data-language="common lisp"><pre>(<a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AQUERY" class="xref">org.shirakumo.dns-client:query</a> &quot;google.com&quot; :type :MX)
+;; =&gt; ... &quot;alt3.aspmx.l.google.com&quot;
+
+(<a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESOLVE" class="xref">org.shirakumo.dns-client:resolve</a> &quot;aspmx.l.google.com&quot;)
+;; =&gt; &quot;173.194.76.26&quot;
+
+(<a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AHOSTNAME" class="xref">org.shirakumo.dns-client:hostname</a> &quot;173.194.76.26&quot;)
+;; =&gt; &quot;ws-in-f26.1e100.net&quot;
+
+(<a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESOLVE" class="xref">org.shirakumo.dns-client:resolve</a> &quot;ws-in-f26.1e100.net&quot;)
+;; =&gt; &quot;173.194.76.26&quot;</pre></code><p>Some common record types are translated into more readable structures automatically. Unsupported ones will have their data available octets. If you find you need support for a record that's not implemented yet, please <a class="external-link" href="https://github.com/shinmera/dns-client/pull/new">contribute a patch</a>.</p></article></section>   <section id="system"> <h2>System Information</h2>  <div class="row"> <label for="version">Version:</label> <a id="version">1.0.0</a> </div>   <div class="row"> <label for="dependencies">Dependencies:</label> <ul id="dependencies"><li><a class="external">usocket</a></li><li><a class="external" href="https://Shinmera.github.io/documentation-utils/">documentation-utils</a></li></ul> </div>   <div class="row"> <label for="author">Author:</label> <a id="author" href="mailto:shinmera@tymoon.eu">Nicolas Hafner</a> </div>   <div class="row"> <label for="license">License:</label> <a id="license" href="https://github.com/shinmera/dns-client/blob/master/LICENSE">zlib</a> </div>   <div class="row"> <label for="homepage">Homepage:</label> <a id="homepage" href="https://shinmera.github.io/dns-client/">https://shinmera.github.io/dns-client/</a> </div>  </section>    <section id="index"> <h2>Definition Index</h2> <ul> <li> <article class="definition package" id="PACKAGE ORG.SHIRAKUMO.DNS-CLIENT"> <header> <h3> <a href="#PACKAGE%20ORG.SHIRAKUMO.DNS-CLIENT">ORG.SHIRAKUMO.DNS-CLIENT</a> </h3> <ul class="nicknames"></ul>  </header> <div class="docstring"><i>No documentation provided.</i></div> <ul class="definitions"> <li> <article class="definition constant" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:DNS-PORT"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CONSTANT</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-PORT">DNS-PORT</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L9">Source</a>  </header> <div class="docstring"><pre>The port used for DNS queries.
+
+Should be 53.</pre></div> </article> </li>  <li> <article class="definition constant" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:RECV-BUFFER-LENGTH"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CONSTANT</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3ARECV-BUFFER-LENGTH">RECV-BUFFER-LENGTH</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L10">Source</a>  </header> <div class="docstring"><pre>The buffer size for received DNS packets.
+
+Defaults to 65507, which should be more than enough for all DNS
+queries. Note that while the standard DNS packet size used to (and
+still is in some devices) limited to 512 bytes, this restriction no
+longer applies generally.</pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:*CLOUDFLARE-SERVERS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2ACLOUDFLARE-SERVERS%2A">*CLOUDFLARE-SERVERS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L12">Source</a>  </header> <div class="docstring"><pre>List of IP addresses to CloudFlare's DNS servers.</pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:*DNS-SERVERS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2ADNS-SERVERS%2A">*DNS-SERVERS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L22">Source</a>  </header> <div class="docstring"><pre>List of IP addresses to query for DNS records.
+
+By default this is a combination of the localhost address and a bunch
+of other publicly available DNS servers, in rough order of
+trustworthiness and speed.
+
+You may bind or modify this variable to suit your preferences.
+
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2ACLOUDFLARE-SERVERS%2A" class="xref">*CLOUDFLARE-SERVERS*</a>
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2ADNSWATCH-SERVERS%2A" class="xref">*DNSWATCH-SERVERS*</a>
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2AGOOGLE-SERVERS%2A" class="xref">*GOOGLE-SERVERS*</a>
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2AOPENDNS-SERVERS%2A" class="xref">*OPENDNS-SERVERS*</a>
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2AQUAD9-SERVERS%2A" class="xref">*QUAD9-SERVERS*</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AQUERY" class="xref">QUERY</a></pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:*DNSWATCH-SERVERS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2ADNSWATCH-SERVERS%2A">*DNSWATCH-SERVERS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L14">Source</a>  </header> <div class="docstring"><pre>List of IP addresses to DNSWatch's DNS servers.</pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:*GOOGLE-SERVERS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2AGOOGLE-SERVERS%2A">*GOOGLE-SERVERS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L16">Source</a>  </header> <div class="docstring"><pre>List of IP addresses to Google's DNS servers.</pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:*OPENDNS-SERVERS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2AOPENDNS-SERVERS%2A">*OPENDNS-SERVERS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L18">Source</a>  </header> <div class="docstring"><pre>List of IP addresses to OpenDNS' DNS servers.</pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:*QUAD9-SERVERS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2AQUAD9-SERVERS%2A">*QUAD9-SERVERS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L20">Source</a>  </header> <div class="docstring"><pre>List of IP addresses to Quad9's DNS servers.</pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.DNS-CLIENT:*RECORD-TYPE-TABLE*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2ARECORD-TYPE-TABLE%2A">*RECORD-TYPE-TABLE*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/record-types.lisp#L9">Source</a>  </header> <div class="docstring"><pre>Table associating standardised names to DNS record type IDs.
+
+This is a list where each entry should be a list of two elements, the
+standardised name as a symbol, and the (unsigned-byte 16) ID.
+
+You should not need to modify this. The table contains all
+standardised records types.
+
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARECORD-TYPE-ID" class="xref">RECORD-TYPE-ID</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AID-RECORD-TYPE" class="xref">ID-RECORD-TYPE</a></pre></div> </article> </li>  <li> <article class="definition condition" id="CONDITION ORG.SHIRAKUMO.DNS-CLIENT:DNS-CONDITION"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CONDITION</span> <h4 class="name"> <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-CONDITION">DNS-CONDITION</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/toolkit.lisp#L9">Source</a>  </header> <div class="docstring"><pre>Base type for all DNS conditions.</pre></div> </article> </li>  <li> <article class="definition condition" id="CONDITION ORG.SHIRAKUMO.DNS-CLIENT:DNS-SERVER-FAILURE"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CONDITION</span> <h4 class="name"> <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVER-FAILURE">DNS-SERVER-FAILURE</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/toolkit.lisp#L12">Source</a>  </header> <div class="docstring"><pre>Error signalled when a DNS server replies with a bad response code.
+
+See <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-CONDITION" class="xref">DNS-CONDITION</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVER" class="xref">DNS-SERVER</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESPONSE-CODE" class="xref">RESPONSE-CODE</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AQUERY" class="xref">QUERY</a></pre></div> </article> </li>  <li> <article class="definition condition" id="CONDITION ORG.SHIRAKUMO.DNS-CLIENT:DNS-SERVERS-EXHAUSTED"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CONDITION</span> <h4 class="name"> <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVERS-EXHAUSTED">DNS-SERVERS-EXHAUSTED</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/toolkit.lisp#L18">Source</a>  </header> <div class="docstring"><pre>Error signalled when all DNS servers fail to provide a response.
+
+See <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-CONDITION" class="xref">DNS-CONDITION</a></pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:HOSTNAME"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AHOSTNAME">HOSTNAME</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">IP</li>    <li class="argument lambda-list-keyword">&amp;REST</li>    <li class="argument">ARGS</li>    <li class="argument lambda-list-keyword">&amp;KEY</li>    <li class="argument">TYPE</li>    <li class="argument">DNS-SERVERS</li>    <li class="argument">RETRIES</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L261">Source</a>  </header> <div class="docstring"><pre>Perform a reverse DNS query.
+
+Returns three values, the first hostname that was found (if any), a
+list of all hostnames that were found, and whether the query was
+successful. If the last value is NIL, the first two values are NIL as
+well.
+
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AQUERY" class="xref">QUERY</a></pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:ID-RECORD-TYPE"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AID-RECORD-TYPE">ID-RECORD-TYPE</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">ID</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/record-types.lisp#L111">Source</a>  </header> <div class="docstring"><pre>Returns the standardised record name for the given record type ID.
+
+If the record type ID is not known, the ID itself is returned
+instead.
+
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2ARECORD-TYPE-TABLE%2A" class="xref">*RECORD-TYPE-TABLE*</a></pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:QUERY"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AQUERY">QUERY</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">HOSTNAME</li>    <li class="argument lambda-list-keyword">&amp;KEY</li>    <li class="argument">TYPE</li>    <li class="argument">DNS-SERVERS</li>    <li class="argument">RETRIES</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L231">Source</a>  </header> <div class="docstring"><pre>Perform a DNS query for the given hostname.
+
+TYPE should be a DNS class name or class ID that identifies the type
+of record you want to retrieve.
+
+DNS-SERVERS should be a list of DNS servers to consult for your
+query. Each server in the list is asked RETRIES number of times before
+skipping ahead to the next one.
+
+Returns a PLIST of the resulting query, if successful.
+
+The result contains the following keys:
+
+  :QUESTIONS    --- A list of QUERY structures.
+  :ANSWERS      --- A list of RECORD structures.
+  :AUTHORITIES  --- A list of RECORD structures.
+  :ADDITIONAL   --- A list of RECORD structures.
+  :ID           --- The ID identifying the query.
+  :RECURSION-DESIRED   --- Whether recursion was asked for.
+  :TRUNCATED-MESSAGE   --- Whether the message was truncated.
+  :OPERATION    --- The operation that was carried out.
+  :REPLY-P      --- Whether this is a reply.
+  :RESPONSE-CODE       --- The response status code.
+  :CHECKING-DISABLED   --- Whether checking was disabled.
+  :AUTHENTICATED-DATA  --- Whether the data is authorative.
+  :Z-RESERVED   --- Reserved flag.
+  :RECURSION-AVAILABLE --- Whether the server allows recursion.
+  :QUESTION-COUNT      --- How many QUESTION records there are.
+  :ANSWER-COUNT        --- How many ANSWER records there are.
+  :AUTHORITY-COUNT     --- How many AUTHORITY records there are.
+  :ADDITIONAL-COUNT    --- How many ADDITIONAL records there are.
+
+A query structure is a plist with the following keys:
+
+  :NAME         --- The hostname that was queried.
+  :TYPE         --- The record type that was queried.
+  :CLASS        --- The record class that was queried.
+
+A record structure is a plist with the following keys:
+
+  :NAME         --- The hostname the result relates to.
+  :TYPE         --- The record type.
+  :CLASS        --- The record class.
+  :TTL          --- The time this record remains valid for, in
+                    minutes.
+  :LENGTH       --- The length of the payload in octets.
+  :DATA         --- A record type specific data payload.
+
+The client will translate record types from their octet data into a
+more easily digestible format for some record types:
+
+  :A            --- An IPv4 address in string format.
+  :AAAA         --- An IPv6 address in string format.
+  :TXT :URI :CNAME :PTR
+                --- A hostname.
+  :MX           --- A plist with the following keys:
+    :PRIORITY
+    :NAME
+  :SOA          --- A plist with the following keys:
+    :MNAME
+    :RNAME
+    :SERIAL
+    :REFRESH
+    :RETRY
+    :EXPIRE
+    :MINIMUM
+
+If a server is queried and has sent a response, but the response
+contains a non-zero response code, a condition of type
+DNS-SERVER-FAILURE is signalled. During this time, the CONTINUE
+restart can be used to skip the server and attempt the next one,
+or the ABORT restart can be used to simply return NIL from QUERY.
+
+If no server succeeds, an error of type DNS-SERVERS-EXHAUSTED
+is signalled.
+
+See <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVER-FAILURE" class="xref">DNS-SERVER-FAILURE</a>
+See <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVERS-EXHAUSTED" class="xref">DNS-SERVERS-EXHAUSTED</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESOLVE" class="xref">RESOLVE</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AHOSTNAME" class="xref">HOSTNAME</a></pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:RECORD-TYPE-ID"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARECORD-TYPE-ID">RECORD-TYPE-ID</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">RECORD-TYPE</li>    <li class="argument lambda-list-keyword">&amp;OPTIONAL</li>    <li class="argument">ERROR</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/record-types.lisp#L107">Source</a>  </header> <div class="docstring"><pre>Returns the record type ID for the given record name.
+
+If ERROR is non-NIL, and the given record type does not exist, an
+error is signalled. Otherwise, NIL is returned for inexistent record
+types.
+
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.DNS-CLIENT%3A%2ARECORD-TYPE-TABLE%2A" class="xref">*RECORD-TYPE-TABLE*</a></pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:RESOLVE"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESOLVE">RESOLVE</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">HOSTNAME</li>    <li class="argument lambda-list-keyword">&amp;REST</li>    <li class="argument">ARGS</li>    <li class="argument lambda-list-keyword">&amp;KEY</li>    <li class="argument">TYPE</li>    <li class="argument">DNS-SERVERS</li>    <li class="argument">RETRIES</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/client.lisp#L249">Source</a>  </header> <div class="docstring"><pre>Resolves a hostname to its IP address.
+
+This is a shorthand to fetch the A or AAAA records.
+
+Returns three values, the first IP that was found (if any), a list of
+all IPs that were found, and whether the query was successful. If the
+last value is NIL, the first two values are NIL as well.
+
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AQUERY" class="xref">QUERY</a></pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:RESPONSE-CODE-NAME"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESPONSE-CODE-NAME">RESPONSE-CODE-NAME</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">CODE</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/toolkit.lisp#L22">Source</a>  </header> <div class="docstring"><pre>Returns a name for the response code if one is known.</pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:DNS-SERVER"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVER">DNS-SERVER</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">CONDITION</li>  </ul>  </header> <div class="docstring"><pre>Returns the DNS server that returned the failure.
+
+See <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVER-FAILURE" class="xref">DNS-SERVER-FAILURE</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:RESPONSE-CODE"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESPONSE-CODE">RESPONSE-CODE</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">CONDITION</li>  </ul>  </header> <div class="docstring"><pre>Returns the response code of the condition.
+
+See <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVER-FAILURE" class="xref">DNS-SERVER-FAILURE</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3ARESPONSE-CODE-NAME" class="xref">RESPONSE-CODE-NAME</a></pre></div> </article> </li>  <li> <article class="definition macro callable" id="MACRO-FUNCTION ORG.SHIRAKUMO.DNS-CLIENT:WITH-DNS-ERROR-HANDLING"> <header> <span class="visibility">EXTERNAL</span> <span class="type">MACRO</span> <h4 class="name"> <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.DNS-CLIENT%3AWITH-DNS-ERROR-HANDLING">WITH-DNS-ERROR-HANDLING</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument lambda-list-keyword">&amp;BODY</li>    <li class="argument">BODY</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/dns-client/blob/master/toolkit.lisp#L45">Source</a>  </header> <div class="docstring"><pre>Wraps a handler around BODY that performs useful defaults.
+
+In particular, it will cause CONTINUE to be invoked on all error
+responses that are a failure on the server side, but still let the
+error propagate for all failures that indicate a bad query.
+
+See <a href="#CONDITION%20ORG.SHIRAKUMO.DNS-CLIENT%3ADNS-SERVER-FAILURE" class="xref">DNS-SERVER-FAILURE</a></pre></div> </article> </li> </ul> </article> </li> </ul> </section>  </article> <script>window.addEventListener("DOMContentLoaded", function(){
+    var unmarkElement = function(el){
+        if(el.tagName === "mark" || el.tagName === "MARK"){
+            [].forEach.call(el.childNodes, function(child){
+                el.parentNode.insertBefore(child, el);
+            });
+            el.parentNode.removeChild(el);
+        }else if(el.parentNode.tagName === "mark"){
+            return unmarkElement(el.parentNode);
+        }
+        return null;
+    }
+
+    var unmarkAll = function(root){
+        root = root || document;
+        [].forEach.call(root.querySelectorAll("mark"), unmarkElement);
+    }
+    
+    var markElement = function(el){
+        if(el.parentNode.tagName === "mark" || el.parentNode.tagName === "MARK"){
+            return el.parentNode;
+        } else {
+            unmarkAll();
+            var marked = document.createElement("mark");
+            el.parentNode.insertBefore(marked, el);
+            marked.appendChild(el);
+            return marked;
+        }
+    }
+
+    var markFragmented = function(){
+        if(window.location.hash){
+            var el = document.getElementById(decodeURIComponent(window.location.hash.substr(1)));
+            if(el) markElement(el);
+        }
+    }
+
+    var registerXrefLink = function(link){
+        var el = document.getElementById(decodeURIComponent(link.getAttribute("href").substr(1)));
+        if(el){
+            link.addEventListener("click", function(){
+                markElement(el);
+            });
+        }
+    }
+
+    var registerXrefLinks = function(root){
+        root = root || document;
+        [].forEach.call(root.querySelectorAll("a.xref"), registerXrefLink);
+    }
+
+    markFragmented();
+    registerXrefLinks();
+}); </script> </body> </html> 
