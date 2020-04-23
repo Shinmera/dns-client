@@ -1,1 +1,21 @@
-## Don't look, aaaaaaaaaa
+## About dns-client
+This is a pure-lisp implementation of a DNS client. You can use this to resolve hostnames, reverse-lookup IP addresses, and fetch other kinds of DNS records.
+
+## How To
+The primary interface is ``query``, with shorthands for the most common operations in ``resolve`` and ``hostname``.
+
+:: common lisp
+(org.shirakumo.dns-client:query "google.com" :type :MX)
+;; => ... "alt3.aspmx.l.google.com"
+
+(org.shirakumo.dns-client:resolve "aspmx.l.google.com")
+;; => "173.194.76.26"
+
+(org.shirakumo.dns-client:hostname "173.194.76.26")
+;; => "ws-in-f26.1e100.net"
+
+(org.shirakumo.dns-client:resolve "ws-in-f26.1e100.net")
+;; => "173.194.76.26"
+::
+
+Some common record types are translated into more readable structures automatically. Unsupported ones will have their data available octets. If you find you need support for a record that's not implemented yet, please "contribute a patch"(https://github.com/shinmera/dns-client/pull/new).

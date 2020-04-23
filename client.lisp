@@ -31,7 +31,7 @@
     (flet ((finish (end)
              (setf (aref octets (+ offset start)) (- end start))
              (loop for i from (1+ start) to end
-                   do (setf (aref octets (+ offset i)) (char-code (char name (1- i)))))
+                   do (setf (aref octets (+ offset i)) (char-code (char-downcase (char name (1- i))))))
              (setf start (1+ end))))
       (loop for i from 0 below (length name)
             do (when (char= #\. (char name i))
@@ -46,7 +46,9 @@
         do (let ((jump (char-code (char string i))))
              (setf (char string i) #\.)
              (incf i (1+ jump))))
-  string)
+  (if (string/= "" string)
+      (subseq string 1)
+      string))
 
 (defun decode-host (octets offset start)
   (loop with i = offset
@@ -116,7 +118,7 @@
 
 (defun decode-query (octets offset)
   (with-decoding (octets offset pos)
-    (values (list :type (int16)
+    (values (list :type (id-record-type (int16))
                   :class (int16))
             pos)))
 
@@ -141,14 +143,7 @@
           (aref octets (+ 3 start))))
 
 (defmethod decode-record-payload ((type (eql :AAAA)) octets start end)
-  (with-output-to-string (stream)
-    (with-decoding (octets start)
-      (loop for i from 0 below 8
-            for group = (int16)
-            do (when (/= 0 group)
-                 (format stream "~4,'0x" group))
-               (when (< i 7)
-                 (format stream ":"))))))
+  (usocket:vector-to-ipv6-host octets))
 
 (defmethod decode-record-payload ((type (eql :TXT)) octets start end)
   (decode-host octets start 0))
@@ -157,6 +152,9 @@
   (decode-host octets start 0))
 
 (defmethod decode-record-payload ((type (eql :CNAME)) octets start end)
+  (decode-host octets start 0))
+
+(defmethod decode-record-payload ((type (eql :PTR)) octets start end)
   (decode-host octets start 0))
 
 ;; TODO: decode more.
@@ -183,8 +181,10 @@
     (setf (getf data :data) (decode-record-payload (getf data :type) octets pos (+ pos (getf data :length))))
     (values data (+ pos (getf data :length)))))
 
-(defun decode-response (octets offset)
+(defun decode-response (server octets offset)
   (multiple-value-bind (header pos) (decode-header octets offset)
+    (when (< 0 (getf header :response-code))
+      (error 'dns-server-failure :dns-server server :response-code (getf header :response-code)))
     (let ((record-offset pos))
       (flet ((decode (fun)
                (multiple-value-bind (name pos) (decode-host octets record-offset offset)
@@ -192,18 +192,19 @@
                    (setf record-offset pos)
                    (setf (getf query :name) name)
                    query))))
-        (list :questions
-              (loop repeat (getf header :question-count)
-                    collect (decode #'decode-query))
-              :answers
-              (loop repeat (getf header :answer-count)
-                    collect (decode #'decode-record))
-              :authorities
-              (loop repeat (getf header :authority-count)
-                    collect (decode #'decode-record))
-              :additional
-              (loop repeat (getf header :additional-count)
-                    collect (decode #'decode-record)))))))
+        (list* :questions
+               (loop repeat (getf header :question-count)
+                     collect (decode #'decode-query))
+               :answers
+               (loop repeat (getf header :answer-count)
+                     collect (decode #'decode-record))
+               :authorities
+               (loop repeat (getf header :authority-count)
+                     collect (decode #'decode-record))
+               :additional
+               (loop repeat (getf header :additional-count)
+                     collect (decode #'decode-record))
+               header)))))
 
 (defun try-server (server send send-length recv recv-length &key (retries 3))
   (handler-case
@@ -221,26 +222,53 @@
     (usocket:socket-error (e)
       (values NIL e))))
 
-(defun build-query (hostname type)
+(defun build-query (hostname type &rest header-args)
   (let* ((send (make-array 512 :element-type '(unsigned-byte 8) :initial-element 0))
-         (pos (encode-header send 0 :id 42 :recursion-desired T :question-count 1))
+         (pos (apply #'encode-header send 0 :id 42 :recursion-desired T :question-count 1 header-args))
          (pos (encode-query send pos hostname :type type :class 1)))
     (values send pos)))
 
-(defun query (hostname &key (type T) (dns-servers *dns-servers*) (retries 3))
-  (let ((recv (make-array RECV-BUFFER-LENGTH :element-type '(unsigned-byte 8) :initial-element 0)))
-    (multiple-value-bind (send send-length) (build-query hostname type)
-      (loop for server in dns-servers
-            for recv-length = (try-server server send send-length recv RECV-BUFFER-LENGTH :retries retries)
-            do (when recv-length
-                 (return (decode-response recv 0)))
-            finally (error "Failed to get a response from any server.")))))
+(defun query (hostname &key (type T) (dns-servers *dns-servers*) (retries 1))
+  (with-simple-restart (abort "Abort the DNS query.")
+    (let ((recv (make-array RECV-BUFFER-LENGTH :element-type '(unsigned-byte 8) :initial-element 0)))
+      (multiple-value-bind (send send-length) (build-query hostname type)
+        (loop for server in dns-servers
+              for recv-length = (try-server server send send-length recv RECV-BUFFER-LENGTH :retries retries)
+              do (when recv-length
+                   (with-simple-restart (continue "Skip this DNS server.")
+                     (return (decode-response server recv 0))))
+              finally (with-simple-restart (continue "Return NIL instead.")
+                        (error 'dns-servers-exhausted)))))))
 
-(defun query-data (hostname &rest args)
+(defun query-data (hostname &rest args &key type dns-servers retries)
+  (declare (ignore dns-servers retries))
   (loop for record in (getf (apply #'query hostname args) :answers)
+        when (eql type (getf record :type))
         collect (getf record :data)))
 
-(defun resolve (hostname &rest args)
-  (let ((list (append (apply #'query-data hostname :type :A args)
-                      (apply #'query-data hostname :type :AAAA args))))
-    (values (first list) list)))
+(defun resolve (hostname &rest args &key type dns-servers retries)
+  (declare (ignore dns-servers retries))
+  (handler-case
+      (handler-bind ((dns-server-failure #'continue))
+        (let ((list (if type
+                        (apply #'query-data hostname args)
+                        (append (apply #'query-data hostname :type :A args)
+                                (apply #'query-data hostname :type :AAAA args)))))
+          (values (first list) list T)))
+    (dns-servers-exhausted ()
+      (values NIL NIL NIL))))
+
+(defun hostname (ip &rest args &key type dns-servers retries)
+  (declare (ignore type dns-servers retries))
+  (handler-case
+      (handler-bind ((dns-server-failure #'continue))
+        (let* ((ipv6-p (find #\: ip))
+               (parts (if ipv6-p
+                          (loop for byte across (usocket:ipv6-host-to-vector ip)
+                                collect (format NIL "~x" (ldb (byte 4 4) byte))
+                                collect (format NIL "~x" (ldb (byte 4 0) byte)))
+                          (split #\. ip)))
+               (list (apply #'query-data (format NIL "~{~a.~}~:[in-addr~;ip6~].arpa" (nreverse parts) ipv6-p) :type :PTR args)))
+          (values (first list) list T)))
+    (dns-condition ()
+      (values NIL NIL NIL))))
