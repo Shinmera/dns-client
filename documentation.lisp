@@ -131,7 +131,7 @@ TYPE should be a DNS class name or class ID that identifies the type
 of record you want to retrieve.
 
 DNS-SERVERS should be a list of DNS servers to consult for your
-query. Each server in the list is asked RETRIES number of times before
+query. Each server in the list is asked ATTEMPTS number of times before
 skipping ahead to the next one.
 
 Returns a PLIST of the resulting query, if successful.
