@@ -17,6 +17,7 @@
    #:*quad9-servers*
    #:*dns-servers*
    #:query
+   #:query-data
    #:resolve
    #:hostname)
   ;; record-types.lisp

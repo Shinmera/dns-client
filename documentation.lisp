@@ -206,6 +206,14 @@ See DNS-SERVERS-EXHAUSTED
 See RESOLVE
 See HOSTNAME")
 
+  (function query-data
+    "Shorthand to return the data payloads from the answers of a query.
+
+This returns a list of all :DATA fields of :ANSWERS records from the
+query result that match the requested record type.
+
+See QUERY")
+
   (function resolve
     "Resolves a hostname to its IP address.
 
