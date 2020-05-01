@@ -213,7 +213,7 @@
                                             :element-type '(unsigned-byte 8)
                                             :timeout 1)))
         (unwind-protect
-             (loop repeat retries
+             (loop repeat attempts
                    do (usocket:socket-send socket send send-length)
                       (let ((received (nth-value 1 (usocket:socket-receive socket recv recv-length))))
                         (when (and received (< 0 received))
