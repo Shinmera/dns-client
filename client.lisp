@@ -206,7 +206,7 @@
                      collect (decode #'decode-record))
                header)))))
 
-(defun try-server (server send send-length recv recv-length &key (attempts 1))
+(defun try-server (server send send-length recv recv-length &key (attempts 1) (timeout 1))
   (handler-case
       (let ((socket (usocket:socket-connect server DNS-PORT
                                             :protocol :datagram
@@ -215,9 +215,10 @@
         (unwind-protect
              (loop repeat attempts
                    do (usocket:socket-send socket send send-length)
-                      (let ((received (nth-value 1 (usocket:socket-receive socket recv recv-length))))
-                        (when (and received (< 0 received))
-                          (return received))))
+                      (when (usocket:wait-for-input socket :timeout timeout)
+                        (let ((received (nth-value 1 (usocket:socket-receive socket recv recv-length))))
+                          (when (and received (< 0 received))
+                            (return received)))))
           (usocket:socket-close socket)))
     (usocket:socket-error (e)
       (values NIL e))))
@@ -228,26 +229,26 @@
          (pos (encode-query send pos hostname :type type :class 1)))
     (values send pos)))
 
-(defun query (hostname &key (type T) (dns-servers *dns-servers*) (attempts 1))
+(defun query (hostname &key (type T) (dns-servers *dns-servers*) (attempts 1) (timeout 1))
   (with-simple-restart (abort "Abort the DNS query.")
     (let ((recv (make-array RECV-BUFFER-LENGTH :element-type '(unsigned-byte 8) :initial-element 0)))
       (multiple-value-bind (send send-length) (build-query hostname type)
         (loop for server in dns-servers
-              for recv-length = (try-server server send send-length recv RECV-BUFFER-LENGTH :attempts attempts)
+              for recv-length = (try-server server send send-length recv RECV-BUFFER-LENGTH :attempts attempts :timeout timeout)
               do (when recv-length
                    (with-simple-restart (continue "Skip this DNS server.")
                      (return (decode-response server recv 0))))
               finally (with-simple-restart (continue "Return NIL instead.")
                         (error 'dns-servers-exhausted)))))))
 
-(defun query-data (hostname &rest args &key type dns-servers attempts)
-  (declare (ignore dns-servers attempts))
+(defun query-data (hostname &rest args &key type dns-servers attempts timeout)
+  (declare (ignore dns-servers attempts timeout))
   (loop for record in (getf (apply #'query hostname args) :answers)
         when (eql type (getf record :type))
         collect (getf record :data)))
 
-(defun resolve (hostname &rest args &key type dns-servers attempts)
-  (declare (ignore dns-servers attempts))
+(defun resolve (hostname &rest args &key type dns-servers attempts timeout)
+  (declare (ignore dns-servers attempts timeout))
   (handler-case
       (handler-bind ((dns-server-failure #'continue))
         (let ((list (if type
@@ -258,8 +259,8 @@
     (dns-servers-exhausted ()
       (values NIL NIL NIL))))
 
-(defun hostname (ip &rest args &key type dns-servers attempts)
-  (declare (ignore type dns-servers attempts))
+(defun hostname (ip &rest args &key type dns-servers attempts timeout)
+  (declare (ignore type dns-servers attempts timeout))
   (handler-case
       (handler-bind ((dns-server-failure #'continue))
         (let* ((ipv6-p (find #\: ip))
