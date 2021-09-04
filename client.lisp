@@ -7,7 +7,7 @@
 (in-package #:org.shirakumo.dns-client)
 
 (defconstant DNS-PORT 53)
-(defconstant RECV-BUFFER-LENGTH 65507)
+(defconstant RECV-BUFFER-LENGTH 4096)
 
 (defvar *cloudflare-servers*
   '("1.1.1.1" "1.0.0.1"))
@@ -181,7 +181,8 @@
     (setf (getf data :data) (decode-record-payload (getf data :type) octets pos (+ pos (getf data :length))))
     (values data (+ pos (getf data :length)))))
 
-(defun decode-response (server octets offset)
+(defun decode-response (server octets offset limit)
+  ;; FIXME: Implement buffer limiting.
   (multiple-value-bind (header pos) (decode-header octets offset)
     (when (< 0 (getf header :response-code))
       (error 'dns-server-failure :dns-server server :response-code (getf header :response-code)))
@@ -232,12 +233,13 @@
 (defun query (hostname &key (type T) (dns-servers *dns-servers*) (attempts 1) (timeout 1))
   (with-simple-restart (abort "Abort the DNS query.")
     (let ((recv (make-array RECV-BUFFER-LENGTH :element-type '(unsigned-byte 8) :initial-element 0)))
+      (declare (dynamic-extent recv))
       (multiple-value-bind (send send-length) (build-query hostname type)
         (loop for server in dns-servers
               for recv-length = (try-server server send send-length recv RECV-BUFFER-LENGTH :attempts attempts :timeout timeout)
               do (when recv-length
                    (with-simple-restart (continue "Skip this DNS server.")
-                     (return (decode-response server recv 0))))
+                     (return (decode-response server recv 0 recv-length))))
               finally (with-simple-restart (continue "Return NIL instead.")
                         (error 'dns-servers-exhausted)))))))
 
