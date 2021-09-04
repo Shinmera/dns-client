@@ -224,17 +224,18 @@
     (usocket:socket-error (e)
       (values NIL e))))
 
-(defun build-query (hostname type &rest header-args)
-  (let* ((send (make-array 512 :element-type '(unsigned-byte 8) :initial-element 0))
-         (pos (apply #'encode-header send 0 :id 42 :recursion-desired T :question-count 1 header-args))
-         (pos (encode-query send pos hostname :type type :class 1)))
-    (values send pos)))
+(defmacro with-query-buffer ((send pos hostname type &rest header-args) &body body)
+  `(let* ((,send (make-array 512 :element-type '(unsigned-byte 8) :initial-element 0))
+          (,pos (encode-header ,send 0 :id 42 :recursion-desired T :question-count 1 ,@header-args))
+          (,pos (encode-query ,send ,pos ,hostname :type ,type :class 1)))
+     (declare (dynamic-extent ,send))
+     ,@body))
 
 (defun query (hostname &key (type T) (dns-servers *dns-servers*) (attempts 1) (timeout 1))
   (with-simple-restart (abort "Abort the DNS query.")
     (let ((recv (make-array RECV-BUFFER-LENGTH :element-type '(unsigned-byte 8) :initial-element 0)))
       (declare (dynamic-extent recv))
-      (multiple-value-bind (send send-length) (build-query hostname type)
+      (with-query-buffer (send send-length hostname type)
         (loop for server in dns-servers
               for recv-length = (try-server server send send-length recv RECV-BUFFER-LENGTH :attempts attempts :timeout timeout)
               do (when recv-length
