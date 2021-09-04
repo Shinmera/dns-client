@@ -215,7 +215,7 @@
         (unwind-protect
              (loop repeat attempts
                    do (usocket:socket-send socket send send-length)
-                      (when (usocket:wait-for-input socket :timeout timeout)
+                      (when (usocket:wait-for-input socket :timeout timeout :ready-only T)
                         (let ((received (nth-value 1 (usocket:socket-receive socket recv recv-length))))
                           (when (and received (< 0 received))
                             (return received)))))
