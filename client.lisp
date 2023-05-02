@@ -25,9 +25,9 @@
                  *cloudflare-servers* *opendns-servers*
                  *google-servers*)))
 
-;;; TODO: Handle unicode.
 (defun encode-host (name octets offset)
-  (let ((start 0))
+  (let ((start 0)
+        (name (org.shirakumo.punycode:encode-domain name)))
     (flet ((finish (end)
              (setf (aref octets (+ offset start)) (- end start))
              (loop for i from (1+ start) to end
@@ -46,9 +46,10 @@
         do (let ((jump (char-code (char string i))))
              (setf (char string i) #\.)
              (incf i (1+ jump))))
-  (if (string/= "" string)
-      (subseq string 1)
-      string))
+  (org.shirakumo.punycode:decode-domain
+   (if (string/= "" string)
+       (subseq string 1)
+       string)))
 
 (defun decode-host (octets offset start)
   (loop with i = offset

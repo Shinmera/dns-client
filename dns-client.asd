@@ -20,4 +20,5 @@
                (:file "client")
                (:file "documentation"))
   :depends-on (:usocket
+               :punycode
                :documentation-utils))
