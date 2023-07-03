@@ -1,14 +1,8 @@
-#|
- This file is a part of dns-client
- (c) 2020 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
- Author: Nicolas Hafner <shinmera@tymoon.eu>
-|#
-
 (asdf:defsystem dns-client
   :version "1.0.0"
   :license "zlib"
-  :author "Nicolas Hafner <shinmera@tymoon.eu>"
-  :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :author "Yukari Hafner <shinmera@tymoon.eu>"
+  :maintainer "Yukari Hafner <shinmera@tymoon.eu>"
   :description "A client for the DNS protocol."
   :homepage "https://shinmera.github.io/dns-client/"
   :bug-tracker "https://github.com/shinmera/dns-client/issues"
