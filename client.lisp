@@ -45,8 +45,8 @@
        (subseq string 1)
        string)))
 
-(defun decode-host (octets start &optional (end recv-buffer-length))
-  (let ((pos start)
+(defun decode-host (octets index start end)
+  (let ((pos index)
         (state 0)
         (compress-start 0)
         (loops 0)
@@ -79,7 +79,7 @@
                        (error "Bad host: DNS label length is disallowed 0x~2x value" octet))
                      (when (= 0 octet)
                        (return (values (decode-host* (get-output-stream-string stream))
-                                       (if (= 0 compress-start) compress-start (1+ pos)))))
+                                       (if (= 0 compress-start) pos compress-start))))
                      (write-char (code-char octet) stream)
                      (setf state octet))))))))
 
@@ -159,27 +159,27 @@
   (usocket:vector-to-ipv6-host octets))
 
 (defmethod decode-record-payload ((type (eql :TXT)) octets start end)
-  (decode-host octets start end))
+  (decode-host octets start 0 end))
 
 (defmethod decode-record-payload ((type (eql :URI)) octets start end)
-  (decode-host octets start end))
+  (decode-host octets start 0 end))
 
 (defmethod decode-record-payload ((type (eql :CNAME)) octets start end)
-  (decode-host octets start end))
+  (decode-host octets start 0 end))
 
 (defmethod decode-record-payload ((type (eql :PTR)) octets start end)
-  (decode-host octets start end))
+  (decode-host octets start 0 end))
 
 ;; TODO: decode more.
 
 (defmethod decode-record-payload ((type (eql :MX)) octets start end)
   (with-decoding (octets start pos)
     (list :priority (int16)
-          :name (decode-host octets pos end))))
+          :name (decode-host octets pos 0 end))))
 
 (defmethod decode-record-payload ((type (eql :SOA)) octets start end)
-  (multiple-value-bind (mname pos) (decode-host octets start end)
-    (multiple-value-bind (rname pos) (decode-host octets pos end)
+  (multiple-value-bind (mname pos) (decode-host octets start 0 end)
+    (multiple-value-bind (rname pos) (decode-host octets pos 0 end)
       (with-decoding (octets pos)
         (list :mname mname
               :rname rname
@@ -201,7 +201,7 @@
       (error 'dns-server-failure :dns-server server :response-code (getf header :response-code)))
     (let ((record-offset pos))
       (flet ((decode (fun)
-               (multiple-value-bind (name pos) (decode-host octets record-offset limit)
+               (multiple-value-bind (name pos) (decode-host octets record-offset offset limit)
                  (multiple-value-bind (query pos) (funcall fun octets pos)
                    (setf record-offset pos)
                    (setf (getf query :name) name)
