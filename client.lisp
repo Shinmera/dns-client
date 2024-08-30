@@ -234,6 +234,9 @@
                           (when (and received (< 0 received))
                             (return received)))))
           (usocket:socket-close socket)))
+    #+sbcl
+    (sb-bsd-sockets:socket-error (e)
+      (values NIL e))
     (usocket:socket-error (e)
       (values NIL e))))
 
