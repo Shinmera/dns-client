@@ -189,6 +189,21 @@
               :expire (int32)
               :minimum (int32))))))
 
+(defmethod decode-record-payload ((type (eql :NS)) octets start end)
+  (format nil "~{~A~^.~}"
+          (loop for s = start then (+ s len 1)
+                for len = (elt octets s)
+                if (= len 192)          ; Compression jump
+                  do (progn (setf s (elt octets (1+ s)))
+                            (setf len (elt octets s)))
+                while (and (not (= len 0)) (<= s end))
+                collect (format nil "~{~A~}"
+                                (decode-ascii (subseq octets (1+ s) (+ s len 1)))))))
+
+(defun decode-ascii (octets)
+  (loop for byte across octets
+        collect (code-char byte)))
+
 (defun decode-record (octets offset)
   (multiple-value-bind (data pos) (decode-data octets offset)
     (setf (getf data :data) (decode-record-payload (getf data :type) octets pos (+ pos (getf data :length))))
