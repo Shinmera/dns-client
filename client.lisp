@@ -170,6 +170,9 @@
 (defmethod decode-record-payload ((type (eql :PTR)) octets start end)
   (decode-host octets start 0 end))
 
+(defmethod decode-record-payload ((type (eql :NS)) octets start end)
+  (decode-host octets start 0 end))
+
 ;; TODO: decode more.
 
 (defmethod decode-record-payload ((type (eql :MX)) octets start end)
