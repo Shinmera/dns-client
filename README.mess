@@ -18,4 +18,4 @@ The primary interface is ``query``, with shorthands for the most common operatio
 ;; => "173.194.76.26"
 ::
 
-Some common record types are translated into more readable structures automatically. Unsupported ones will have their data available octets. If you find you need support for a record that's not implemented yet, please "contribute a patch"(https://github.com/shinmera/dns-client/pull/new).
+Some common record types are translated into more readable structures automatically. Unsupported ones will have their data available octets. If you find you need support for a record that's not implemented yet, please "contribute a patch"(https://shinmera.com/project/dns-client/pull/new).

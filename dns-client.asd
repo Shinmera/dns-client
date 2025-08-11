@@ -4,9 +4,9 @@
   :author "Yukari Hafner <shinmera@tymoon.eu>"
   :maintainer "Yukari Hafner <shinmera@tymoon.eu>"
   :description "A client for the DNS protocol."
-  :homepage "https://shinmera.github.io/dns-client/"
-  :bug-tracker "https://github.com/shinmera/dns-client/issues"
-  :source-control (:git "https://github.com/shinmera/dns-client.git")
+  :homepage "https://shinmera.com/docs/dns-client/"
+  :bug-tracker "https://shinmera.com/project/dns-client/issues"
+  :source-control (:git "https://shinmera.com/project/dns-client.git")
   :serial T
   :components ((:file "package")
                (:file "toolkit")
